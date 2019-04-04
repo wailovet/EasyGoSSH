@@ -1,6 +1,8 @@
 package EasyGoSSH
 
-import "github.com/axgle/mahonia"
+import (
+	"github.com/axgle/mahonia"
+)
 
 const RsaKey = `-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQC8fpi06NfVYHAOAnxNMVnTXr/ptsLsNjP+uAt2eO0cc5J9H5XV

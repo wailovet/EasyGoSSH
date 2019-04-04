@@ -2,6 +2,7 @@ package EasyGoSSH
 
 import (
 	"github.com/gliderlabs/ssh"
+	"github.com/pkg/sftp"
 	"log"
 	"os/exec"
 	"runtime"
@@ -9,6 +10,18 @@ import (
 
 func ListenSSH(addr string, username string, password string, shellPath string) error {
 	sshHandler := func(s ssh.Session) {
+
+		println("test2")
+		serverOptions := []sftp.ServerOption{
+			func(server *sftp.Server) error {
+				println("test")
+				return nil
+			},
+		}
+		sftps, _ := sftp.NewServer(s, serverOptions...)
+		sftps.Serve()
+		log.Println("new session:", s.User())
+
 		cmd := exec.Command(shellPath)
 		stdIn, _ := cmd.StdinPipe()
 		stdoutIn, _ := cmd.StdoutPipe()
@@ -61,6 +74,8 @@ func ListenSSH(addr string, username string, password string, shellPath string) 
 				}
 
 				_, err = stdIn.Write(TranslateInput(buf[:i]))
+				println("input:", i)
+				println("input:", string(buf[:i]))
 				if err != nil {
 					cmd.Process.Kill()
 					break
@@ -80,6 +95,7 @@ func ListenSSH(addr string, username string, password string, shellPath string) 
 		Handler:         sshHandler,
 		PasswordHandler: passHandler,
 	}
+
 	err := ssh.HostKeyPEM([]byte(RsaKey))(s)
 	if err != nil {
 		return err
